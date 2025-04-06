@@ -1,29 +1,24 @@
 package st10101766.core;
 
 public class Login {
-    private final Registration registration;
-    private boolean accessGranted;
-    
+    private Registration registration;
+
     public Login(Registration registration) {
         this.registration = registration;
     }
-    
-    public boolean loginUser(String userNameAttempt, String passwordAttempt) {
-        String storedUserName = registration.getUserName();
-        String storedPassword = registration.getPassword();
-        
-        accessGranted = (userNameAttempt != null && userNameAttempt.equals(storedUserName)) &&
-                        (passwordAttempt != null && passwordAttempt.equals(storedPassword));
-        
-        return accessGranted;
+
+    public boolean loginUser(String username, String password) {
+        // Your existing logic
+        return registration.getUserName().equals(username) && registration.getPassword().equals(password);
     }
 
     public String returnLoginStatus() {
-        if (accessGranted) {
-            return String.format("Welcome %s %s,\nit is great to see you.", 
-                registration.getFirstName(), registration.getLastName());
-        } else {
-            return "Username & Password do not match our records, please try again.";
-        }
+        // Your existing logic
+        return "Welcome back, " + registration.getUserName();
+    }
+
+    // Added for MessagePanel
+    public String getUsername() {
+        return registration.getUserName();
     }
 }

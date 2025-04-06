@@ -5,18 +5,17 @@ import st10101766.core.User;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 
 public class RegistrationPanel extends JPanel {
     private User user;
     private CardLayout cardLayout;
     private JPanel mainPanel;
 
-    // Components
     private JPanel headerPanel;
     private JLabel logoLabel;
     private JLabel titleLabel;
+    private JButton exitButton;
     private JPanel formPanel;
     private JLabel usernameLabel;
     private JTextField usernameField;
@@ -29,10 +28,10 @@ public class RegistrationPanel extends JPanel {
     private JLabel lastnameLabel;
     private JTextField lastnameField;
     private JButton registerButton;
-    private JLabel feedbackLabel;
+    private JTextArea feedbackArea; // Changed from JLabel
 
     public RegistrationPanel() {
-        setBackground(new Color(236, 229, 221)); // WhatsApp light gray
+        setBackground(UIConstants.BACKGROUND_COLOR);
         initializeComponents();
         setupLayout();
         addEventListeners();
@@ -46,18 +45,23 @@ public class RegistrationPanel extends JPanel {
 
     private void initializeComponents() {
         headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(7, 94, 84)); // WhatsApp teal
+        headerPanel.setBackground(UIConstants.HEADER_COLOR);
         headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        logoLabel = new JLabel(new ImageIcon(getClass().getResource("/logo.png")));
-        logoLabel.setPreferredSize(new Dimension(100, 100)); // Smaller logo
-        titleLabel = new JLabel("Register", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        logoLabel = new JLabel(new ImageIcon(getClass().getResource(UIConstants.LOGO_PATH)));
+        logoLabel.setPreferredSize(new Dimension(100, 100));
+        titleLabel = new JLabel(UIConstants.REGISTER_TITLE, SwingConstants.CENTER);
+        titleLabel.setFont(UIConstants.TITLE_FONT);
         titleLabel.setForeground(Color.WHITE);
+        exitButton = new JButton("Exit");
+        exitButton.setFont(UIConstants.BUTTON_FONT);
+        exitButton.setBackground(Color.RED.darker());
+        exitButton.setForeground(Color.WHITE);
+        exitButton.setFocusPainted(false);
+        exitButton.setBorder(new EmptyBorder(5, 15, 5, 15));
 
         formPanel = new JPanel();
-        formPanel.setBackground(Color.WHITE);
+        formPanel.setBackground(UIConstants.FORM_COLOR);
         formPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        formPanel.setMaximumSize(new Dimension(400, Integer.MAX_VALUE)); // Constrain width
 
         usernameLabel = new JLabel("Username:");
         usernameField = new JTextField(20);
@@ -70,51 +74,47 @@ public class RegistrationPanel extends JPanel {
         lastnameLabel = new JLabel("Last Name:");
         lastnameField = new JTextField(20);
         registerButton = new JButton("Register");
-        feedbackLabel = new JLabel("");
-
-        // Styling
-        Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
-        Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
-        Color textColor = new Color(33, 33, 33); // Darker gray
-        Color hintColor = new Color(120, 120, 120); // Subtle hint gray
+        feedbackArea = new JTextArea(3, 20); // Fixed rows/columns
+        feedbackArea.setEditable(false);
+        feedbackArea.setLineWrap(true);
+        feedbackArea.setWrapStyleWord(true);
+        feedbackArea.setFont(UIConstants.FEEDBACK_FONT);
+        feedbackArea.setForeground(UIConstants.ERROR_COLOR);
+        feedbackArea.setBackground(UIConstants.FORM_COLOR);
+        feedbackArea.setBorder(BorderFactory.createEmptyBorder());
 
         for (JLabel label : new JLabel[]{usernameLabel, passwordLabel, cellphoneLabel, firstnameLabel, lastnameLabel}) {
-            label.setFont(labelFont);
-            label.setForeground(textColor);
+            label.setFont(UIConstants.LABEL_FONT);
+            label.setForeground(UIConstants.TEXT_COLOR);
         }
-
         for (JTextField field : new JTextField[]{usernameField, cellphoneField, firstnameField, lastnameField}) {
-            field.setFont(fieldFont);
-            field.setForeground(textColor);
+            field.setFont(UIConstants.FIELD_FONT);
+            field.setForeground(UIConstants.TEXT_COLOR);
             field.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
                     new EmptyBorder(8, 8, 8, 8)));
         }
-        passwordField.setFont(fieldFont);
-        passwordField.setForeground(textColor);
+        passwordField.setFont(UIConstants.FIELD_FONT);
+        passwordField.setForeground(UIConstants.TEXT_COLOR);
         passwordField.setBorder(usernameField.getBorder());
 
-        registerButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        registerButton.setBackground(new Color(37, 211, 102)); // WhatsApp green
+        registerButton.setFont(UIConstants.BUTTON_FONT);
+        registerButton.setBackground(UIConstants.BUTTON_COLOR);
         registerButton.setForeground(Color.WHITE);
         registerButton.setFocusPainted(false);
-        registerButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        registerButton.setBorder(new EmptyBorder(10, 20, 10, 20));
         registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        feedbackLabel.setFont(new Font("Segoe UI", Font.ITALIC, 12));
-        feedbackLabel.setForeground(new Color(244, 67, 54)); // Red for errors
-
-        // Placeholders
-        setupPlaceholder(usernameField, "Enter username (e.g., Just_)");
-        setupPlaceholder(passwordField, "Enter password (e.g., Med-Lemon$69");
-        setupPlaceholder(cellphoneField, "Enter phone (e.g., +27697948993)");
-        setupPlaceholder(firstnameField, "Enter first name");
-        setupPlaceholder(lastnameField, "Enter last name");
+        setupPlaceholder(usernameField, UIConstants.USERNAME_HINT);
+        setupPlaceholder(passwordField, UIConstants.PASSWORD_HINT);
+        setupPlaceholder(cellphoneField, UIConstants.PHONE_HINT);
+        setupPlaceholder(firstnameField, UIConstants.FIRSTNAME_HINT);
+        setupPlaceholder(lastnameField, UIConstants.LASTNAME_HINT);
     }
 
     private void setupPlaceholder(JTextField field, String hint) {
         field.setText(hint);
-        field.setForeground(new Color(120, 120, 120));
+        field.setForeground(UIConstants.HINT_COLOR);
         field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -123,7 +123,7 @@ public class RegistrationPanel extends JPanel {
                     if (field instanceof JPasswordField) {
                         ((JPasswordField) field).setEchoChar('*');
                     }
-                    field.setForeground(new Color(33, 33, 33));
+                    field.setForeground(UIConstants.TEXT_COLOR);
                 }
             }
 
@@ -134,7 +134,7 @@ public class RegistrationPanel extends JPanel {
                     if (field instanceof JPasswordField) {
                         ((JPasswordField) field).setEchoChar((char) 0);
                     }
-                    field.setForeground(new Color(120, 120, 120));
+                    field.setForeground(UIConstants.HINT_COLOR);
                 }
             }
         });
@@ -142,9 +142,10 @@ public class RegistrationPanel extends JPanel {
 
     private void setupLayout() {
         setLayout(new BorderLayout());
-        headerPanel.setLayout(new BorderLayout());
+        headerPanel.setLayout(new BorderLayout(10, 0));
         headerPanel.add(logoLabel, BorderLayout.WEST);
         headerPanel.add(titleLabel, BorderLayout.CENTER);
+        headerPanel.add(exitButton, BorderLayout.EAST);
         add(headerPanel, BorderLayout.NORTH);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -217,48 +218,70 @@ public class RegistrationPanel extends JPanel {
         gbc.gridy = 6;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        formPanel.add(feedbackLabel, gbc);
+        formPanel.add(feedbackArea, gbc);
 
         centerPanel.add(formPanel, new GridBagConstraints());
         add(centerPanel, BorderLayout.CENTER);
     }
 
     private void addEventListeners() {
-        registerButton.addActionListener(e -> {
-            String username = usernameField.getText().equals("Enter username (e.g., Just_)") ? "" : usernameField.getText();
-            String password = new String(passwordField.getPassword()).equals("Enter password (e.g., Med-Lemon$69") ? "" : new String(passwordField.getPassword());
-            String cellPhone = cellphoneField.getText().equals("Enter phone (e.g., +27697948993)") ? "" : cellphoneField.getText();
-            String firstName = firstnameField.getText().equals("Enter first name") ? "" : firstnameField.getText();
-            String lastName = lastnameField.getText().equals("Enter last name") ? "" : lastnameField.getText();
+        registerButton.addActionListener(e -> handleRegister());
+        exitButton.addActionListener(e -> System.exit(0));
 
-            Registration reg = new Registration();
-            String[] feedback = reg.registerUser(username, password, cellPhone, firstName, lastName);
-            if (feedback[0].equals("You have been successfully registered")) {
-                user.registerUser(username, password, cellPhone, firstName, lastName); // Store in User
-                clearFields();
-                feedbackLabel.setForeground(new Color(37, 211, 102)); // WhatsApp green
-                feedbackLabel.setText(feedback[0]);
-                Timer timer = new Timer(2000, evt -> cardLayout.show(mainPanel, "login"));
-                timer.setRepeats(false);
-                timer.start();
-            } else {
-                feedbackLabel.setForeground(new Color(244, 67, 54)); // Red
-                feedbackLabel.setText("<html>" + String.join("<br>", feedback) + "</html>");
+        KeyAdapter enterKeyListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    handleRegister();
+                }
+            }
+        };
+        usernameField.addKeyListener(enterKeyListener);
+        passwordField.addKeyListener(enterKeyListener);
+        cellphoneField.addKeyListener(enterKeyListener);
+        firstnameField.addKeyListener(enterKeyListener);
+        lastnameField.addKeyListener(enterKeyListener);
+
+        registerButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                registerButton.setBackground(UIConstants.BUTTON_COLOR.brighter());
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                registerButton.setBackground(UIConstants.BUTTON_COLOR);
             }
         });
     }
 
+    private void handleRegister() {
+        String username = usernameField.getText().equals(UIConstants.USERNAME_HINT) ? "" : usernameField.getText();
+        String password = new String(passwordField.getPassword()).equals(UIConstants.PASSWORD_HINT) ? "" : new String(passwordField.getPassword());
+        String cellPhone = cellphoneField.getText().equals(UIConstants.PHONE_HINT) ? "" : cellphoneField.getText();
+        String firstName = firstnameField.getText().equals(UIConstants.FIRSTNAME_HINT) ? "" : firstnameField.getText();
+        String lastName = lastnameField.getText().equals(UIConstants.LASTNAME_HINT) ? "" : lastnameField.getText();
+
+        Registration reg = new Registration();
+        String[] feedback = reg.registerUser(username, password, cellPhone, firstName, lastName);
+        if (feedback[0].equals(UIConstants.SUCCESS_MESSAGE)) {
+            user.registerUser(username, password, cellPhone, firstName, lastName);
+            clearFields();
+            feedbackArea.setForeground(UIConstants.SUCCESS_COLOR);
+            feedbackArea.setText(feedback[0]);
+            JOptionPane.showMessageDialog(this, feedback[0], "Success", JOptionPane.INFORMATION_MESSAGE);
+            new Timer(2000, e -> cardLayout.show(mainPanel, UIConstants.LOGIN_PANEL)).start();
+        } else {
+            feedbackArea.setForeground(UIConstants.ERROR_COLOR);
+            feedbackArea.setText(String.join("\n", feedback)); // Plain text, no HTML
+        }
+    }
+
     private void clearFields() {
-        usernameField.setText("Enter username (e.g., Just_)");
-        usernameField.setForeground(new Color(120, 120, 120));
-        passwordField.setText("Enter password (e.g., Med-Lemon$69");
-        passwordField.setEchoChar((char) 0);
-        passwordField.setForeground(new Color(120, 120, 120));
-        cellphoneField.setText("Enter phone (e.g., +27697948993)");
-        cellphoneField.setForeground(new Color(120, 120, 120));
-        firstnameField.setText("Enter first name");
-        firstnameField.setForeground(new Color(120, 120, 120));
-        lastnameField.setText("Enter last name");
-        lastnameField.setForeground(new Color(120, 120, 120));
+        setupPlaceholder(usernameField, UIConstants.USERNAME_HINT);
+        setupPlaceholder(passwordField, UIConstants.PASSWORD_HINT);
+        setupPlaceholder(cellphoneField, UIConstants.PHONE_HINT);
+        setupPlaceholder(firstnameField, UIConstants.FIRSTNAME_HINT);
+        setupPlaceholder(lastnameField, UIConstants.LASTNAME_HINT);
     }
 }
