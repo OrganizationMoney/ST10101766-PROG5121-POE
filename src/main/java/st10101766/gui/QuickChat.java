@@ -4,6 +4,7 @@ import st10101766.core.Login;
 import st10101766.core.User;
 import javax.swing.*;
 import java.awt.*;
+// Hi
 
 public class QuickChat extends JFrame
 {
