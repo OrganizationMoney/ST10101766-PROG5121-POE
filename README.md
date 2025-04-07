@@ -17,9 +17,6 @@ A simple WhatsApp-inspired chat application called QuickChat.
 *Login Screen*  
 ![Login](screenshots/login.png)
 
-*Messages Screen*  
-![Messages](screenshots/messages.png)
-
 ## Prerequisites
 - **JDK 21**: Ensure Java 21 is installed.
 - **Maven**: For dependency management and building.
