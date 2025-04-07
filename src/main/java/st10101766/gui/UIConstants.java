@@ -9,15 +9,15 @@ public class UIConstants {
     public static final String LOGIN_PANEL = "login";
     public static final String MESSAGE_PANEL = "message";
     public static final String LOGO_PATH = "/logo.png";
-    public static final String REGISTER_TITLE = "Register";
+    public static final String REGISTRATION_TITLE = "Register";
     public static final String LOGIN_TITLE = "Login";
     public static final String MESSAGE_TITLE = "Messages";
     public static final String SUCCESS_MESSAGE = "You have been successfully registered";
     public static final String USERNAME_HINT = "Enter username (e.g., u_123)";
     public static final String PASSWORD_HINT = "Enter password";
     public static final String PHONE_HINT = "Enter phone (e.g., +27123456789)";
-    public static final String FIRSTNAME_HINT = "Enter first name";
-    public static final String LASTNAME_HINT = "Enter last name";
+    public static final String FIRST_NAME_HINT = "Enter first name";
+    public static final String LAST_NAME_HINT = "Enter last name";
     public static final Color BACKGROUND_COLOR = new Color(236, 229, 221); // WhatsApp light gray
     public static final Color HEADER_COLOR = new Color(7, 94, 84); // WhatsApp teal
     public static final Color FORM_COLOR = Color.WHITE;
@@ -32,4 +32,6 @@ public class UIConstants {
     public static final Font BUTTON_FONT = new Font("Segoe UI", Font.BOLD, 14);
     public static final Font FEEDBACK_FONT = new Font("Segoe UI", Font.ITALIC, 12);
     public static final Font MESSAGE_FONT = new Font("Segoe UI", Font.PLAIN, 16);
+    
+    public static final String CONFIRM_PASSWORD_HINT = "Confirm password";
 }

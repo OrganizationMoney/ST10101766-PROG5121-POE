@@ -8,10 +8,11 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 
-public class LoginPanel extends JPanel {
+public class LoginPanel extends JPanel
+{
     private User user;
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
+    private QuickChat quickChat;
+    private boolean isProcessing = false;
 
     private JPanel headerPanel;
     private JLabel logoLabel;
@@ -25,20 +26,22 @@ public class LoginPanel extends JPanel {
     private JButton loginButton;
     private JTextArea feedbackArea;
 
-    public LoginPanel() {
+    public LoginPanel()
+    {
         setBackground(UIConstants.BACKGROUND_COLOR);
         initializeComponents();
         setupLayout();
         addEventListeners();
     }
 
-    public void setUser(User user, CardLayout cardLayout, JPanel mainPanel) {
+    public void setUser(User user, QuickChat quickChat)
+    {
         this.user = user;
-        this.cardLayout = cardLayout;
-        this.mainPanel = mainPanel;
+        this.quickChat = quickChat;
     }
 
-    private void initializeComponents() {
+    private void initializeComponents()
+    {
         headerPanel = new JPanel();
         headerPanel.setBackground(UIConstants.HEADER_COLOR);
         headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -72,7 +75,8 @@ public class LoginPanel extends JPanel {
         feedbackArea.setBackground(UIConstants.FORM_COLOR);
         feedbackArea.setBorder(BorderFactory.createEmptyBorder());
 
-        for (JLabel label : new JLabel[]{usernameLabel, passwordLabel}) {
+        for (JLabel label : new JLabel[]{usernameLabel, passwordLabel})
+        {
             label.setFont(UIConstants.LABEL_FONT);
             label.setForeground(UIConstants.TEXT_COLOR);
         }
@@ -96,15 +100,20 @@ public class LoginPanel extends JPanel {
         setupPlaceholder(passwordField, UIConstants.PASSWORD_HINT);
     }
 
-    private void setupPlaceholder(JTextField field, String hint) {
+    private void setupPlaceholder(JTextField field, String hint)
+    {
         field.setText(hint);
         field.setForeground(UIConstants.HINT_COLOR);
-        field.addFocusListener(new FocusAdapter() {
+        field.addFocusListener(new FocusAdapter()
+        {
             @Override
-            public void focusGained(FocusEvent e) {
-                if (field.getText().equals(hint)) {
+            public void focusGained(FocusEvent e)
+            {
+                if (field.getText().equals(hint))
+                {
                     field.setText("");
-                    if (field instanceof JPasswordField) {
+                    if (field instanceof JPasswordField)
+                    {
                         ((JPasswordField) field).setEchoChar('*');
                     }
                     field.setForeground(UIConstants.TEXT_COLOR);
@@ -112,10 +121,13 @@ public class LoginPanel extends JPanel {
             }
 
             @Override
-            public void focusLost(FocusEvent e) {
-                if (field.getText().isEmpty()) {
+            public void focusLost(FocusEvent e)
+            {
+                if (field.getText().isEmpty())
+                {
                     field.setText(hint);
-                    if (field instanceof JPasswordField) {
+                    if (field instanceof JPasswordField)
+                    {
                         ((JPasswordField) field).setEchoChar((char) 0);
                     }
                     field.setForeground(UIConstants.HINT_COLOR);
@@ -124,7 +136,8 @@ public class LoginPanel extends JPanel {
         });
     }
 
-    private void setupLayout() {
+    private void setupLayout()
+    {
         setLayout(new BorderLayout());
         headerPanel.setLayout(new BorderLayout(10, 0));
         headerPanel.add(logoLabel, BorderLayout.WEST);
@@ -168,64 +181,78 @@ public class LoginPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(feedbackArea, gbc);
 
         centerPanel.add(formPanel, new GridBagConstraints());
         add(centerPanel, BorderLayout.CENTER);
     }
 
-    private void addEventListeners() {
+    private void addEventListeners()
+    {
         loginButton.addActionListener(e -> handleLogin());
         exitButton.addActionListener(e -> System.exit(0));
 
-        KeyAdapter enterKeyListener = new KeyAdapter() {
+        KeyAdapter enterKeyListener = new KeyAdapter()
+        {
             @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            public void keyPressed(KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                {
                     handleLogin();
                 }
             }
         };
         usernameField.addKeyListener(enterKeyListener);
         passwordField.addKeyListener(enterKeyListener);
-
-        loginButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                loginButton.setBackground(UIConstants.BUTTON_COLOR.brighter());
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                loginButton.setBackground(UIConstants.BUTTON_COLOR);
-            }
-        });
     }
 
-    private void handleLogin() {
-        String username = usernameField.getText().equals(UIConstants.USERNAME_HINT) ? "" : usernameField.getText();
-        String password = new String(passwordField.getPassword()).equals(UIConstants.PASSWORD_HINT) ? "" : new String(passwordField.getPassword());
+    private void handleLogin()
+{
+    if (isProcessing)
+    {
+        System.out.println("Login already in progress, ignoring");
+        return;
+    }
+    isProcessing = true;
+    System.out.println("Starting login process");
 
-        Registration reg = user.getUser(username);
-        if (reg != null) {
-            Login login = new Login(reg);
-            if (login.loginUser(username, password)) {
-                feedbackArea.setForeground(UIConstants.SUCCESS_COLOR);
-                feedbackArea.setText(login.returnLoginStatus());
-                JOptionPane.showMessageDialog(this, login.returnLoginStatus(), "Success", JOptionPane.INFORMATION_MESSAGE);
-                new Timer(2000, e -> {
-                    cardLayout.show(mainPanel, UIConstants.MESSAGE_PANEL);
-                    QuickChat parent = (QuickChat) SwingUtilities.getWindowAncestor(this);
-                    parent.setCurrentLogin(login);
-                }).start();
-            } else {
-                feedbackArea.setForeground(UIConstants.ERROR_COLOR);
-                feedbackArea.setText(login.returnLoginStatus());
-            }
-        } else {
-            feedbackArea.setForeground(UIConstants.ERROR_COLOR);
-            feedbackArea.setText("Username not found, please register first.");
+    String username = usernameField.getText().equals(UIConstants.USERNAME_HINT) ? "" : usernameField.getText();
+    String password = new String(passwordField.getPassword()).equals(UIConstants.PASSWORD_HINT) ? "" : new String(passwordField.getPassword());
+
+    Registration reg = user.getUser(username);
+    if (reg != null)
+    {
+        Login login = new Login(reg);
+        if (login.loginUser(username, password))
+        {
+            System.out.println("Login successful");
+            String loginMessage = login.returnLoginStatus();// + ", " + reg.getFirstName() + " " + reg.getLastName();
+            JOptionPane.showMessageDialog(this, loginMessage, "Login Success", JOptionPane.INFORMATION_MESSAGE);
+            quickChat.switchToMessage(login);
         }
+        else
+        {
+            System.out.println("Login failed");
+            JOptionPane.showMessageDialog(this, login.returnLoginStatus(), "Login Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    else
+    {
+        System.out.println("Username not found");
+        JOptionPane.showMessageDialog(this, "Username not found, please register first.", "Login Error", JOptionPane.ERROR_MESSAGE);
+    }
+    isProcessing = false;
+    System.out.println("Login process complete");
+}
+
+    public void reset()
+    {
+        usernameField.setText(UIConstants.USERNAME_HINT);
+        passwordField.setText(UIConstants.PASSWORD_HINT);
+        feedbackArea.setText("");
+        loginButton.setEnabled(true);
+        isProcessing = false;
+        System.out.println("LoginPanel reset");
     }
 }

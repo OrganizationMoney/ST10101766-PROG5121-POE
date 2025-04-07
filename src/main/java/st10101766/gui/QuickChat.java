@@ -5,61 +5,70 @@ import st10101766.core.User;
 import javax.swing.*;
 import java.awt.*;
 
-public class QuickChat extends JFrame {
+public class QuickChat extends JFrame
+{
     private User user;
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
     private RegistrationPanel registrationPanel;
     private LoginPanel loginPanel;
-    private MessagePanel messagePanel;
-    private Login currentLogin;
 
-    public QuickChat() {
+    public QuickChat()
+    {
         initializeComponents();
-        setupLayout();
         configureFrame();
     }
 
-    private void initializeComponents() {
+    private void initializeComponents()
+    {
         user = new User();
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-        mainPanel.setBackground(UIConstants.BACKGROUND_COLOR);
         registrationPanel = new RegistrationPanel();
         loginPanel = new LoginPanel();
-        messagePanel = new MessagePanel(null);
 
-        registrationPanel.setUser(user, cardLayout, mainPanel);
-        loginPanel.setUser(user, cardLayout, mainPanel);
+        registrationPanel.setUser(user, this);
+        loginPanel.setUser(user, this);
+
+        setContentPane(registrationPanel);
+        System.out.println("Components initialized");
     }
 
-    private void setupLayout() {
-        mainPanel.add(registrationPanel, UIConstants.REGISTRATION_PANEL);
-        mainPanel.add(loginPanel, UIConstants.LOGIN_PANEL);
-        mainPanel.add(messagePanel, UIConstants.MESSAGE_PANEL);
-        cardLayout.show(mainPanel, UIConstants.REGISTRATION_PANEL);
-        add(mainPanel);
-    }
-
-    private void configureFrame() {
+    private void configureFrame()
+    {
         setTitle(UIConstants.APP_TITLE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1280, 720); // Fixed HD size
-        setResizable(false); // Prevent resizing
+        setSize(1280, 720);
+        setResizable(false);
         setLocationRelativeTo(null);
-        try {
+        try
+        {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
+        setVisible(true);
+        System.out.println("Frame configured");
     }
 
-    public void setCurrentLogin(Login login) {
-        this.currentLogin = login;
-        messagePanel.setLogin(login);
+    public void switchToLogin()
+    {
+        setContentPane(loginPanel);
+        revalidate();
+        repaint();
+        System.out.println("Switched to LoginPanel");
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new QuickChat().setVisible(true));
+    public void switchToMessage(Login login)
+    {
+        JOptionPane.showMessageDialog(this,
+            "Messaging feature coming soon in Part II.",
+            "Success",
+            JOptionPane.INFORMATION_MESSAGE);
+        System.out.println("Login successful for user: " + login.getUsername());
+        loginPanel.reset();
+    }
+
+    public static void main(String[] args)
+    {
+        SwingUtilities.invokeLater(() -> new QuickChat());
     }
 }
